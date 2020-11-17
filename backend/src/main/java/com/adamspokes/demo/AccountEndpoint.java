@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-public class AccountingEndpoint {
+public class AccountEndpoint {
     
     @RequestMapping("/")
     public String index() {
