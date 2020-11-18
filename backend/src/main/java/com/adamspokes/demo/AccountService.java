@@ -109,10 +109,8 @@ public class AccountService implements IAccountService {
         types.add("current_accounts_receivable");
         List<Account> accounts = repo.findAssetsLiabilities("assets", "debit", types);
         assets = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        System.out.println("Assets+ " + assets);
         accounts = repo.findAssetsLiabilities("assets", "credit", types);
         assets.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
-        System.out.println("Assets " + assets);
 
         BigDecimal liabilities = new BigDecimal(0);
         types = new HashSet<String>();
@@ -120,10 +118,8 @@ public class AccountService implements IAccountService {
         types.add("current_accounts_payable");
         accounts = repo.findAssetsLiabilities("liability", "credit", types);
         liabilities = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        System.out.println("Liabilities+ " + liabilities);
         accounts = repo.findAssetsLiabilities("liability", "debit", types);
         liabilities.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
-        System.out.println("Liabilities " + liabilities);
 
         total = assets.divide(liabilities, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return total;
