@@ -22,7 +22,7 @@ public class Application {
 	Resource resourceFile;
 
 	@Autowired
-	AccountService accountService;
+	IAccountService accountService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -32,6 +32,11 @@ public class Application {
 	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
 		return args -> {
 			loadInitialDataFile();
+			System.out.println("Revenue: $" + accountService.calculateRevenue());
+			System.out.println("Expenses: $" + accountService.calculateExpenses());
+			System.out.println("Gross Profit Margin: " + accountService.calculateGrossProfitMargin() + "%");
+			System.out.println("Net Profit Margin: " + accountService.calculateNetProfitMargin() + "%");
+			System.out.println("Working Capital Ratio: " + accountService.calculateWorkingCapitalRatio() + "%");
 		};
 	}
 

@@ -23,7 +23,7 @@ public class Account {
     private String currency; // enum?
     private String identifier;
     private String status; // enum?
-    private String valueType; // enum!
+    private String valueType; // enum! credit or debit
     private String name;
     private String type; // enum!
     private String systemAccount; // enum?
