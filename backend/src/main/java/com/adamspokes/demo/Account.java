@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.adamspokes.demo.enums.AccType;
+import com.adamspokes.demo.enums.Category;
+import com.adamspokes.demo.enums.ValueType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -19,22 +22,22 @@ public class Account {
     private Long id;
 
     private int code;
-    private String category;
-    private String currency; // enum?
+    private Category category;
+    private String currency; 
     private String identifier;
-    private String status; // enum?
-    private String valueType; // enum! credit or debit
+    private String status; 
+    private ValueType valueType;
     private String name;
-    private String type; // enum!
-    private String systemAccount; // enum?
+    private AccType type; 
+    private String systemAccount; 
     private BigDecimal value;
     private String accountTypeBank;
 
     public Account() {
     }
 
-    public Account(int code, String category, String currency, String identifier, String status,
-    String valueType, String name, String type, String systemAccount, BigDecimal value) {
+    public Account(int code, Category category, String currency, String identifier, String status,
+    ValueType valueType, String name, AccType type, String systemAccount, BigDecimal value) {
         this.code = code;
         this.category = category;
         this.currency = currency;
@@ -55,12 +58,12 @@ public class Account {
         this.id = id;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
     @JsonSetter("account_category")
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
     
@@ -100,12 +103,12 @@ public class Account {
         this.status = status;
     }
 
-    public String getValueType() {
+    public ValueType getValueType() {
         return valueType;
     }
 
     @JsonSetter("value_type")
-    public void setValueType(String valueType) {
+    public void setValueType(ValueType valueType) {
         this.valueType = valueType;
     }
 
@@ -118,12 +121,12 @@ public class Account {
         this.name = name;
     }
 
-    public String getType() {
+    public AccType getType() {
         return type;
     }
 
     @JsonSetter("account_type")
-    public void setType(String type) {
+    public void setType(AccType type) {
         this.type = type;
     }
 

@@ -9,6 +9,9 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.adamspokes.demo.enums.AccType;
+import com.adamspokes.demo.enums.Category;
+import com.adamspokes.demo.enums.ValueType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -34,12 +37,12 @@ public class AccountService implements IAccountService {
 
     @Override
     public BigDecimal calculateRevenue() {
-        return calculateTotalByCategory("revenue");
+        return calculateTotalByCategory(Category.REVENUE);
     }
 
     @Override
     public BigDecimal calculateExpenses() {
-        return calculateTotalByCategory("expense");
+        return calculateTotalByCategory(Category.EXPENSE);
     }
 
     @Override
@@ -83,9 +86,12 @@ public class AccountService implements IAccountService {
         */
         BigDecimal total = new BigDecimal(0);
         BigDecimal costOfSales = new BigDecimal(0);
-        List<Account> accounts = repo.findByTypeAndValueType("sales", "debit");
+        List<Account> accounts = repo.findByTypeAndValueType(AccType.SALES, ValueType.DEBIT);
         costOfSales = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal revenue = calculateRevenue();
+        if (revenue.equals(BigDecimal.ZERO)) {
+            return BigDecimal.ZERO;
+        }
         total = revenue.subtract(costOfSales).divide(revenue, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return total;
     }
@@ -94,6 +100,9 @@ public class AccountService implements IAccountService {
     public BigDecimal calculateNetProfitMargin() {
         BigDecimal total = new BigDecimal(0);
         BigDecimal revenue = calculateRevenue();
+        if (revenue.equals(BigDecimal.ZERO)) {
+            return BigDecimal.ZERO;
+        }
         total = revenue.subtract(calculateExpenses()).divide(revenue, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return total;
     }
@@ -103,29 +112,32 @@ public class AccountService implements IAccountService {
         BigDecimal total = new BigDecimal(0);
 
         BigDecimal assets = new BigDecimal(0);
-        Set<String> types = new HashSet<String>();
-        types.add("current");
-        types.add("bank");
-        types.add("current_accounts_receivable");
-        List<Account> accounts = repo.findAssetsLiabilities("assets", "debit", types);
+        Set<AccType> types = new HashSet<AccType>();
+        types.add(AccType.CURRENT);
+        types.add(AccType.BANK);
+        types.add(AccType.CURRENT_ACCOUNTS_RECEIVEABLE);
+        List<Account> accounts = repo.findAssetsLiabilities(Category.ASSETS, ValueType.DEBIT, types);
         assets = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        accounts = repo.findAssetsLiabilities("assets", "credit", types);
+        accounts = repo.findAssetsLiabilities(Category.ASSETS, ValueType.CREDIT, types);
         assets.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
 
         BigDecimal liabilities = new BigDecimal(0);
-        types = new HashSet<String>();
-        types.add("current");
-        types.add("current_accounts_payable");
-        accounts = repo.findAssetsLiabilities("liability", "credit", types);
+        types = new HashSet<AccType>();
+        types.add(AccType.CURRENT);
+        types.add(AccType.CURRENT_ACCOUNTS_PAYABLE);
+        accounts = repo.findAssetsLiabilities(Category.LIABILITY, ValueType.CREDIT, types);
         liabilities = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        accounts = repo.findAssetsLiabilities("liability", "debit", types);
+        accounts = repo.findAssetsLiabilities(Category.LIABILITY, ValueType.DEBIT, types);
         liabilities.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
 
+        if (liabilities.equals(BigDecimal.ZERO)) {
+            return BigDecimal.ZERO;
+        }
         total = assets.divide(liabilities, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return total;
     }
 
-    private BigDecimal calculateTotalByCategory(String accountCategory) {
+    private BigDecimal calculateTotalByCategory(Category accountCategory) {
         BigDecimal total = new BigDecimal(0);
         List<Account> accounts = repo.findByCategory(accountCategory);
         total = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -139,16 +151,19 @@ public class AccountService implements IAccountService {
             JsonNode dataNode = om.readTree(jsonString).get("data");
             accountList = om.readValue(dataNode.toString(), new TypeReference<List<Account>>(){});
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException("Error parsing Json File");
         } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException("Error processing Json File");
         }
         for (Account a : accountList) {
             saveAccount(a);
         }
         
+    }
+
+    @Override
+    public List<Account> getAccounts() {
+        return repo.findAll();
     }
 
 
