@@ -89,6 +89,7 @@ public class AccountService implements IAccountService {
         List<Account> accounts = repo.findByTypeAndValueType(AccType.SALES, ValueType.DEBIT);
         costOfSales = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal revenue = calculateRevenue();
+        revenue = revenue.setScale(3);
         if (revenue.equals(BigDecimal.ZERO)) {
             return BigDecimal.ZERO;
         }
@@ -100,6 +101,7 @@ public class AccountService implements IAccountService {
     public BigDecimal calculateNetProfitMargin() {
         BigDecimal total = new BigDecimal(0);
         BigDecimal revenue = calculateRevenue();
+        revenue = revenue.setScale(3);
         if (revenue.equals(BigDecimal.ZERO)) {
             return BigDecimal.ZERO;
         }
@@ -119,7 +121,7 @@ public class AccountService implements IAccountService {
         List<Account> accounts = repo.findAssetsLiabilities(Category.ASSETS, ValueType.DEBIT, types);
         assets = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         accounts = repo.findAssetsLiabilities(Category.ASSETS, ValueType.CREDIT, types);
-        assets.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
+        assets = assets.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
 
         BigDecimal liabilities = new BigDecimal(0);
         types = new HashSet<AccType>();
@@ -128,11 +130,12 @@ public class AccountService implements IAccountService {
         accounts = repo.findAssetsLiabilities(Category.LIABILITY, ValueType.CREDIT, types);
         liabilities = accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         accounts = repo.findAssetsLiabilities(Category.LIABILITY, ValueType.DEBIT, types);
-        liabilities.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
+        liabilities = liabilities.subtract(accounts.stream().map(Account::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
 
         if (liabilities.equals(BigDecimal.ZERO)) {
             return BigDecimal.ZERO;
         }
+        assets = assets.setScale(3);
         total = assets.divide(liabilities, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return total;
     }
