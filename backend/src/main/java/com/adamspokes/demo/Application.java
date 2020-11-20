@@ -16,7 +16,7 @@ public class Application {
 	@Value("classpath:static/data.json")
 	Resource resourceFile;
 
-	@Autowired
+	@Autowired(required=false)
 	IAccountService accountService;
 
 	public static void main(String[] args) {

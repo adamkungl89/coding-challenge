@@ -1,24 +1,27 @@
-package com.adamspokes.demo;
+package com.adamspokes.demo.integrationtests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import javax.transaction.Transactional;
 
+import com.adamspokes.demo.Account;
+import com.adamspokes.demo.AccountService;
+import com.adamspokes.demo.Application;
 import com.adamspokes.demo.enums.AccType;
 import com.adamspokes.demo.enums.Category;
 import com.adamspokes.demo.enums.ValueType;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
 public class AccountServiceIntegrationTests {

@@ -1,4 +1,4 @@
-package com.adamspokes.demo;
+package com.adamspokes.demo.unittests;
 
 import static org.assertj.core.api.Assertions.*;
 
