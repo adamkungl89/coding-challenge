@@ -1,5 +1,21 @@
 # 9Spokes Coding Challenge
 
+## Solution
+The solution brings up an application, reads the data from the 'data.json' file in resources/static, saves the data to an in-memory database, and outputs the formatted answers.
+It uses Spring boot with a service layer (AccountService) and data model layer (Account, AccountRepository).
+It is designed to be expanded upon with a frontend, persistent database, API endpoints to add and manipulate accounts in addition to the intial data file load - but getting this submitted in a timely manner hasn't allowed for those features.
+Some unit tests and integration tests are provided.
+
+Navigate to 'backend' folder and...
+Run the solution with './mvnw spring-boot:run'.
+Run tests with './mvnw test'.
+
+Note regarding calculations
+I had some difficulty understanding the Gross profit margin calculation.
+I think it might be incorrect, or the wording confused me (in that it neither makes any real word sense, nor has any reasonable examples with the data provided).
+So for the purposes of this exercise I used a formula of '(Revenue - CostOfSales)/Revenue', which is the real world formula for GPM, and where CostOfSales is an account with Type=Sales, ValueType=Debit. This is noted in comment in the code, and an example with useful values has been added to data.json. (To use the original data file, rename them in the static folder)
+
+
 ## Overview
 
 This repo contains the instructions and the data you need to complete the _9Spokes coding challenge_.  This challenge is not intended to be complex, but it is an opportunity for you to showcase your understanding and applying of good development practices.
